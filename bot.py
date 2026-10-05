@@ -6,43 +6,47 @@ from datetime import datetime, timedelta, timezone
 import discord
 from discord.ext import commands
 
+
 TOKEN = os.environ["DISCORD_TOKEN"]
 CHANNEL_NAME = "general"
 
+
 POLLS = [
-    ("What's your favorite type of weather?", ["Rainy", "Sunny", "Cloudy", "Cold"]),
-    ("What's better?", ["Tea", "Coffee", "Neither", "Both"]),
+    ("What's your favorite Minecraft mode?", ["Survival", "Creative", "Hardcore", "PvP"]),
+    ("Which game do you play the most?", ["Minecraft", "Roblox", "Fortnite", "Other"]),
+    ("What's better?", ["Pizza", "Burger", "Both", "Neither"]),
+    ("What time do you usually play games?", ["Morning", "Afternoon", "Evening", "Night"]),
+    ("Which Minecraft dimension is best?", ["Overworld", "Nether", "End", "All of them"]),
+    ("What's your favorite PvP weapon?", ["Sword", "Axe", "Bow", "Other"]),
+    ("How active are you on Discord?", ["Very active", "Pretty active", "Sometimes", "Rarely"]),
+    ("What's your favorite type of music?", ["Funk", "Rap", "EDM", "Other"]),
+    ("Would you rather?", ["Better PC", "Better phone", "Better internet", "More storage"]),
+    ("What's your favorite school subject?", ["Maths", "Science", "English", "Other"]),
+    ("Which is better?", ["Summer", "Winter", "Rainy season", "Depends"]),
+    ("How long do you usually game?", ["<1 hour", "1–2 hours", "2–4 hours", "4+ hours"]),
+    ("What's your favorite Minecraft activity?", ["Building", "PvP", "Mining", "Exploring"]),
+    ("Which is more important in a PC?", ["CPU", "GPU", "RAM", "Storage"]),
+    ("What's your favorite snack?", ["Chips", "Chocolate", "Biscuits", "Other"]),
+    ("Would you rather have?", ["Infinite FPS", "Infinite storage", "Infinite internet", "Infinite battery"]),
+    ("Which game should we play together?", ["Minecraft", "L4D", "Roblox", "Other"]),
     ("What's your favorite time of day?", ["Morning", "Afternoon", "Evening", "Night"]),
-    ("Could you survive a week without your phone?", ["Easily", "Probably", "Maybe", "Absolutely not 💀"]),
-    ("What's the best way to spend a free day?", ["Go outside", "Stay home", "Meet friends", "Sleep"]),
-    ("Which do you prefer?", ["Movies", "TV shows", "YouTube", "Short videos"]),
-    ("What's your favorite season?", ["Summer", "Winter", "Spring", "Autumn"]),
-    ("What's better?", ["Beach", "Mountains", "City", "Countryside"]),
-    ("How often do you listen to music?", ["All day", "Often", "Sometimes", "Rarely"]),
-    ("What's your favorite type of food?", ["Fast food", "Homemade", "Street food", "Anything 😭"]),
-    ("What's the best snack?", ["Chips", "Chocolate", "Biscuits", "Popcorn"]),
-    ("What's your favorite drink?", ["Water", "Juice", "Soda", "Tea/Coffee"]),
-    ("Would you rather have:", ["Free food forever", "Free travel forever"]),
-    ("Would you rather:", ["Always be 10 minutes early", "Always be 10 minutes late"]),
-    ("What's more important?", ["Money", "Free time", "Friends", "Happiness"]),
-    ("Which sounds better?", ["Big party", "Small hangout", "Going somewhere", "Staying home"]),
-    ("Do you prefer working alone or with others?", ["Alone", "With others", "Depends", "Neither 💀"]),
-    ("What's your ideal weekend?", ["Going out", "Staying home", "Seeing friends", "Doing absolutely nothing"]),
-    ("How often do you take photos?", ["All the time", "Sometimes", "Rarely", "Never"]),
-    ("What's your favorite kind of video?", ["Funny", "Informative", "Interesting", "Random"]),
-    ("Which would you choose?", ["Teleportation", "Time travel", "Invisibility", "Mind reading"]),
-    ("Would you rather have:", ["Unlimited money", "Unlimited free time"]),
-    ("What's more annoying?", ["Waiting", "Noise", "Slow internet", "Being interrupted"]),
-    ("What's your usual mood when you wake up?", ["Happy", "Tired", "Confused", "Don't talk to me 💀"]),
-    ("How long could you go without social media?", ["A day", "A week", "A month", "Forever"]),
-    ("What's better?", ["Sweet food", "Spicy food", "Salty food", "Sour food"]),
-    ("What's your favorite type of movie?", ["Comedy", "Action", "Horror", "Drama"]),
-    ("Would you rather live in:", ["A huge city", "A small town", "The countryside", "Somewhere random"]),
-    ("What's your biggest enemy?", ["Alarm clocks", "Homework/work", "Traffic", "Monday"]),
-    ("What's more satisfying?", ["Finishing a task", "Getting something new", "Eating good food", "Sleeping"]),
+    ("How good is your aim?", ["Insane", "Good", "Average", "Terrible 💀"]),
+    ("What's more annoying?", ["Lag", "High ping", "Crashes", "Updates"]),
+    ("Which Minecraft update do you prefer?", ["Older versions", "Modern versions", "Both", "Don't care"]),
+    ("What's your favorite server activity?", ["PvP", "Survival", "Minigames", "Chatting"]),
+    ("Would you rather?", ["1000 FPS", "0 ping", "Infinite RAM", "Infinite storage"]),
+    ("What's your favorite drink?", ["Water", "Juice", "Soda", "Other"]),
+    ("Which do you use more?", ["PC", "Phone", "Console", "Tablet"]),
+    ("How often do you check Discord?", ["Constantly", "Every few hours", "Once a day", "Rarely"]),
+    ("What's better for gaming?", ["Keyboard + mouse", "Controller", "Both", "Depends"]),
+    ("What's your favorite Minecraft mob?", ["Creeper", "Zombie", "Skeleton", "Other"]),
+    ("What's your biggest gaming problem?", ["Lag", "Low FPS", "Storage", "Skill issue 💀"]),
+    ("Rate this server!", ["10/10", "8/10", "6/10", "Needs improvement"]),
 ]
 
+
 last_poll = None
+
 
 intents = discord.Intents.default()
 
@@ -52,7 +56,16 @@ class PollBot(commands.Bot):
         asyncio.create_task(send_daily_poll())
 
 
-bot = PollBot(command_prefix="!", intents=intents)
+bot = PollBot(
+    command_prefix="!",
+    intents=intents
+)
+
+
+@bot.event
+async def on_ready():
+    print(f"Logged in as {bot.user}")
+    print("Daily poll system is running.")
 
 
 async def send_daily_poll():
@@ -64,12 +77,14 @@ async def send_daily_poll():
         now = datetime.now(timezone.utc)
 
         # 7:50 PM IST = 14:20 UTC
-target = now.replace(
-    hour=14,
-    minute=20,
-    second=0,
-    microsecond=0
-)
+        target = now.replace(
+            hour=14,
+            minute=20,
+            second=0,
+            microsecond=0
+        )
+
+        # FIXED INDENTATION
         if now >= target:
             target += timedelta(days=1)
 
@@ -89,7 +104,10 @@ target = now.replace(
                 print(f"Could not find #{CHANNEL_NAME} in {guild.name}")
                 continue
 
-            available = [poll for poll in POLLS if poll != last_poll]
+            available = [
+                poll for poll in POLLS
+                if poll != last_poll
+            ]
 
             if not available:
                 available = POLLS
@@ -110,16 +128,14 @@ target = now.replace(
                     multiple=False
                 )
 
-                print(f"Poll posted in {guild.name}: {question}")
+                print(
+                    f"Poll posted in {guild.name}: {question}"
+                )
 
             except Exception as e:
-                print(f"Could not create poll: {e}")
-
-
-@bot.event
-async def on_ready():
-    print(f"Logged in as {bot.user}")
-    print("Daily poll system is running.")
+                print(
+                    f"Could not create poll in {guild.name}: {e}"
+                )
 
 
 async def main():
