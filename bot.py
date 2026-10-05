@@ -45,7 +45,14 @@ POLLS = [
 last_poll = None
 
 intents = discord.Intents.default()
-bot = commands.Bot(command_prefix="!", intents=intents)
+
+
+class PollBot(commands.Bot):
+    async def setup_hook(self):
+        asyncio.create_task(send_daily_poll())
+
+
+bot = PollBot(command_prefix="!", intents=intents)
 
 
 async def send_daily_poll():
@@ -118,7 +125,6 @@ async def on_ready():
 
 async def main():
     async with bot:
-        bot.loop.create_task(send_daily_poll())
         await bot.start(TOKEN)
 
 
