@@ -63,14 +63,13 @@ async def send_daily_poll():
     while not bot.is_closed():
         now = datetime.now(timezone.utc)
 
-        # 7:00 PM IST = 13:30 UTC
-        target = now.replace(
-            hour=13,
-            minute=30,
-            second=0,
-            microsecond=0
-        )
-
+        # 7:50 PM IST = 14:20 UTC
+target = now.replace(
+    hour=14,
+    minute=20,
+    second=0,
+    microsecond=0
+)
         if now >= target:
             target += timedelta(days=1)
 
