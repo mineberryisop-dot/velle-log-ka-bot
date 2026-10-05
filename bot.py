@@ -75,10 +75,10 @@ async def send_daily_poll():
     while not bot.is_closed():
         now = datetime.now(timezone.utc)
 
-        # 7:55 PM IST = 14:25 UTC
+        # 8:05 PM IST = 14:35 UTC
         target = now.replace(
             hour=14,
-            minute=25,
+            minute=35,
             second=0,
             microsecond=0
         )
