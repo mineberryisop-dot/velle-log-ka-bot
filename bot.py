@@ -47,7 +47,6 @@ POLLS = [
 
 last_poll = None
 
-
 intents = discord.Intents.default()
 
 
@@ -76,15 +75,14 @@ async def send_daily_poll():
     while not bot.is_closed():
         now = datetime.now(timezone.utc)
 
-        # 7:50 PM IST = 14:20 UTC
+        # 7:55 PM IST = 14:25 UTC
         target = now.replace(
             hour=14,
-            minute=20,
+            minute=25,
             second=0,
             microsecond=0
         )
 
-        # FIXED INDENTATION
         if now >= target:
             target += timedelta(days=1)
 
