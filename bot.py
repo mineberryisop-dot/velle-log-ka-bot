@@ -11,6 +11,13 @@ from discord.ext import commands
 TOKEN = os.environ["DISCORD_TOKEN"]
 CHANNEL_NAME = "general"
 
+# Temporary test: post 10 seconds after startup
+TEST_ON_STARTUP = True
+
+# Daily schedule: 2:16 PM IST = 08:46 UTC
+POLL_HOUR_UTC = 8
+POLL_MINUTE_UTC = 46
+
 
 POLLS = [
     ("What's your favorite Minecraft mode?", ["Survival", "Creative", "Hardcore", "PvP"]),
@@ -55,10 +62,7 @@ class PollBot(commands.Bot):
         asyncio.create_task(send_daily_poll())
 
 
-bot = PollBot(
-    command_prefix="!",
-    intents=intents
-)
+bot = PollBot(command_prefix="!", intents=intents)
 
 
 @bot.event
@@ -67,18 +71,59 @@ async def on_ready():
     print("Daily poll system is running.")
 
 
-async def send_daily_poll():
+async def post_random_poll():
     global last_poll
 
+    for guild in bot.guilds:
+        channel = discord.utils.get(
+            guild.text_channels,
+            name=CHANNEL_NAME
+        )
+
+        if channel is None:
+            print(f"Could not find #{CHANNEL_NAME} in {guild.name}")
+            continue
+
+        available = [poll for poll in POLLS if poll != last_poll]
+
+        if not available:
+            available = POLLS
+
+        question, answers = random.choice(available)
+        last_poll = (question, answers)
+
+        try:
+            await channel.create_poll(
+                question=question,
+                answers=[
+                    discord.PollAnswer(text=answer)
+                    for answer in answers
+                ],
+                duration=24,
+                multiple=False
+            )
+            print(f"Poll posted in {guild.name}: {question}")
+
+        except Exception as e:
+            print(f"Could not create poll in {guild.name}: {e}")
+
+
+async def send_daily_poll():
     await bot.wait_until_ready()
+
+    # Temporary startup test
+    if TEST_ON_STARTUP:
+        print("TEST MODE: attempting a poll in 10 seconds...")
+        await asyncio.sleep(10)
+        await post_random_poll()
+        print("Startup test finished.")
 
     while not bot.is_closed():
         now = datetime.now(timezone.utc)
 
-        # 2:16 PM IST = 08:46 UTC
         target = now.replace(
-            hour=8,
-            minute=46,
+            hour=POLL_HOUR_UTC,
+            minute=POLL_MINUTE_UTC,
             second=0,
             microsecond=0
         )
@@ -87,53 +132,12 @@ async def send_daily_poll():
             target += timedelta(days=1)
 
         wait_seconds = (target - now).total_seconds()
-
-        print(f"Next poll in {wait_seconds / 3600:.2f} hours.")
+        print(f"Next daily poll in {wait_seconds / 3600:.2f} hours.")
 
         await asyncio.sleep(wait_seconds)
 
-        for guild in bot.guilds:
-            channel = discord.utils.get(
-                guild.text_channels,
-                name=CHANNEL_NAME
-            )
-
-            if channel is None:
-                print(f"Could not find #{CHANNEL_NAME} in {guild.name}")
-                continue
-
-            available = [
-                poll for poll in POLLS
-                if poll != last_poll
-            ]
-
-            if not available:
-                available = POLLS
-
-            poll = random.choice(available)
-            last_poll = poll
-
-            question, answers = poll
-
-            try:
-                await channel.create_poll(
-                    question=question,
-                    answers=[
-                        discord.PollAnswer(text=answer)
-                        for answer in answers
-                    ],
-                    duration=24,
-                    multiple=False
-                )
-
-                print(
-                    f"Poll posted in {guild.name}: {question}"
-                )
-
-            except Exception as e:
-                print(
-                    f"Could not create poll in {guild.name}: {e}"
-                )
+        if not bot.is_closed():
+            await post_random_poll()
 
 
 async def main():
