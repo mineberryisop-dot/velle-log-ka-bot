@@ -12,9 +12,9 @@ from discord.ext import commands
 TOKEN = os.environ["DISCORD_TOKEN"]
 CHANNEL_NAME = "poll"
 
-# Daily poll time: 2:16 PM IST = 08:46 UTC
-POLL_HOUR_UTC = 8
-POLL_MINUTE_UTC = 46
+# Daily poll time: 6:00 PM IST = 12:30 UTC
+POLL_HOUR_UTC = 12
+POLL_MINUTE_UTC = 30
 
 
 # General polls anyone in the server can answer
