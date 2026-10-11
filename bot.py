@@ -11,10 +11,9 @@ from discord.ext import commands
 TOKEN = os.environ["DISCORD_TOKEN"]
 CHANNEL_NAME = "general"
 
-# Temporary test: post 10 seconds after startup
 TEST_ON_STARTUP = True
 
-# Daily schedule: 2:16 PM IST = 08:46 UTC
+# 2:16 PM IST = 08:46 UTC
 POLL_HOUR_UTC = 8
 POLL_MINUTE_UTC = 46
 
@@ -84,7 +83,7 @@ async def post_random_poll():
             print(f"Could not find #{CHANNEL_NAME} in {guild.name}")
             continue
 
-        available = [poll for poll in POLLS if poll != last_poll]
+        available = [p for p in POLLS if p != last_poll]
 
         if not available:
             available = POLLS
@@ -93,25 +92,26 @@ async def post_random_poll():
         last_poll = (question, answers)
 
         try:
-            await channel.create_poll(
+            poll = discord.Poll(
                 question=question,
-                answers=[
-                    discord.PollAnswer(text=answer)
-                    for answer in answers
-                ],
-                duration=24,
+                duration=timedelta(hours=24),
                 multiple=False
             )
-            print(f"Poll posted in {guild.name}: {question}")
+
+            for answer in answers:
+                poll.add_answer(text=answer)
+
+            await channel.send(poll=poll)
+
+            print(f"Poll posted in #{CHANNEL_NAME} in {guild.name}: {question}")
 
         except Exception as e:
-            print(f"Could not create poll in {guild.name}: {e}")
+            print(f"Could not create poll in {guild.name}: {type(e).__name__}: {e}")
 
 
 async def send_daily_poll():
     await bot.wait_until_ready()
 
-    # Temporary startup test
     if TEST_ON_STARTUP:
         print("TEST MODE: attempting a poll in 10 seconds...")
         await asyncio.sleep(10)
