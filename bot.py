@@ -8,47 +8,177 @@ import discord
 from discord.ext import commands
 
 
+# Bot settings
 TOKEN = os.environ["DISCORD_TOKEN"]
-CHANNEL_NAME = "general"
+CHANNEL_NAME = "poll"
 
-TEST_ON_STARTUP = True
-
-# 2:16 PM IST = 08:46 UTC
+# Daily poll time: 2:16 PM IST = 08:46 UTC
 POLL_HOUR_UTC = 8
 POLL_MINUTE_UTC = 46
 
 
+# General polls anyone in the server can answer
 POLLS = [
-    ("What's your favorite Minecraft mode?", ["Survival", "Creative", "Hardcore", "PvP"]),
-    ("Which game do you play the most?", ["Minecraft", "Roblox", "Fortnite", "Other"]),
-    ("What's better?", ["Pizza", "Burger", "Both", "Neither"]),
-    ("What time do you usually play games?", ["Morning", "Afternoon", "Evening", "Night"]),
-    ("Which Minecraft dimension is best?", ["Overworld", "Nether", "End", "All of them"]),
-    ("What's your favorite PvP weapon?", ["Sword", "Axe", "Bow", "Other"]),
-    ("How active are you on Discord?", ["Very active", "Pretty active", "Sometimes", "Rarely"]),
-    ("What's your favorite type of music?", ["Funk", "Rap", "EDM", "Other"]),
-    ("Would you rather?", ["Better PC", "Better phone", "Better internet", "More storage"]),
-    ("What's your favorite school subject?", ["Maths", "Science", "English", "Other"]),
-    ("Which is better?", ["Summer", "Winter", "Rainy season", "Depends"]),
-    ("How long do you usually game?", ["<1 hour", "1–2 hours", "2–4 hours", "4+ hours"]),
-    ("What's your favorite Minecraft activity?", ["Building", "PvP", "Mining", "Exploring"]),
-    ("Which is more important in a PC?", ["CPU", "GPU", "RAM", "Storage"]),
-    ("What's your favorite snack?", ["Chips", "Chocolate", "Biscuits", "Other"]),
-    ("Would you rather have?", ["Infinite FPS", "Infinite storage", "Infinite internet", "Infinite battery"]),
-    ("Which game should we play together?", ["Minecraft", "L4D", "Roblox", "Other"]),
-    ("What's your favorite time of day?", ["Morning", "Afternoon", "Evening", "Night"]),
-    ("How good is your aim?", ["Insane", "Good", "Average", "Terrible 💀"]),
-    ("What's more annoying?", ["Lag", "High ping", "Crashes", "Updates"]),
-    ("Which Minecraft update do you prefer?", ["Older versions", "Modern versions", "Both", "Don't care"]),
-    ("What's your favorite server activity?", ["PvP", "Survival", "Minigames", "Chatting"]),
-    ("Would you rather?", ["1000 FPS", "0 ping", "Infinite RAM", "Infinite storage"]),
-    ("What's your favorite drink?", ["Water", "Juice", "Soda", "Other"]),
-    ("Which do you use more?", ["PC", "Phone", "Console", "Tablet"]),
-    ("How often do you check Discord?", ["Constantly", "Every few hours", "Once a day", "Rarely"]),
-    ("What's better for gaming?", ["Keyboard + mouse", "Controller", "Both", "Depends"]),
-    ("What's your favorite Minecraft mob?", ["Creeper", "Zombie", "Skeleton", "Other"]),
-    ("What's your biggest gaming problem?", ["Lag", "Low FPS", "Storage", "Skill issue 💀"]),
-    ("Rate this server!", ["10/10", "8/10", "6/10", "Needs improvement"]),
+    (
+        "What's the most annoying thing ever?",
+        ["Slow Wi-Fi", "Low battery", "Being ignored", "Lag 💀"]
+    ),
+    (
+        "Which fictional ability would you choose?",
+        ["Teleportation", "Time travel", "Invisibility", "Pause time"]
+    ),
+    (
+        "What's the best way to spend a free day?",
+        ["Sleep", "Go outside", "Play games", "Hang out with friends"]
+    ),
+    (
+        "Which school moment is the BEST?",
+        ["Free period", "Last bell", "Teacher absent", "Holiday announced"]
+    ),
+    (
+        "Which app would be hardest to give up?",
+        ["YouTube", "Discord", "Instagram", "Spotify"]
+    ),
+    (
+        "What ruins a perfectly good day?",
+        ["Bad internet", "Unexpected homework", "Plans cancelled", "Phone lag"]
+    ),
+    (
+        "Pick one unlimited freebie.",
+        ["Food", "Internet", "Travel", "Games"]
+    ),
+    (
+        "Which snack wins?",
+        ["Chips", "Chocolate", "Biscuits", "Instant noodles"]
+    ),
+    (
+        "What type of video do you watch most?",
+        ["Memes", "Gaming", "Music", "Random recommendations"]
+    ),
+    (
+        "What's the best kind of weather?",
+        ["Rainy", "Cold and cloudy", "Sunny", "Thunderstorms"]
+    ),
+    (
+        "Which notification gets your attention fastest?",
+        ["A friend's message", "A server ping", "A sale", "Low battery"]
+    ),
+    (
+        "What's the most difficult thing to do?",
+        ["Wake up early", "Sleep early", "Stop scrolling", "Start studying"]
+    ),
+    (
+        "Choose a dream holiday.",
+        ["Mountains", "Beach", "Big city", "Stay home comfortably"]
+    ),
+    (
+        "Which game genre is the most fun?",
+        ["Action", "Survival", "Racing", "Strategy"]
+    ),
+    (
+        "What's your usual response to 'I'm bored'?",
+        ["Open YouTube", "Play a game", "Text someone", "Take a nap"]
+    ),
+    (
+        "What makes a group chat entertaining?",
+        ["Memes", "Random conversations", "Friendly arguments", "Chaos 💀"]
+    ),
+    (
+        "Which food could you eat most often?",
+        ["Biryani", "Pizza", "Burgers", "Noodles"]
+    ),
+    (
+        "Which is more satisfying?",
+        ["Finishing a task", "Winning a game", "Getting good news", "A long weekend"]
+    ),
+    (
+        "Choose one upgrade for your phone.",
+        ["Better battery", "More storage", "Faster processor", "Better camera"]
+    ),
+    (
+        "What would you do with an extra hour every day?",
+        ["Sleep", "Learn something", "Play games", "Watch videos"]
+    ),
+    (
+        "Which superpower sounds most useful?",
+        ["Read minds", "Instant learning", "Teleportation", "Control time"]
+    ),
+    (
+        "What's the worst thing to forget?",
+        ["Homework", "Earphones", "A password", "Why you opened an app"]
+    ),
+    (
+        "Pick your ideal gaming session.",
+        ["Solo and chill", "With friends", "Competitive", "Trying a new game"]
+    ),
+    (
+        "What's the best kind of humour?",
+        ["Memes", "Sarcasm", "Random nonsense", "Inside jokes"]
+    ),
+    (
+        "Which would you rather have?",
+        ["Unlimited money", "Unlimited free time", "Perfect memory", "Instant travel"]
+    ),
+    (
+        "What do you usually do when the internet goes down?",
+        ["Restart the router", "Use mobile data", "Complain", "Touch grass 😭"]
+    ),
+    (
+        "Which time of day feels best?",
+        ["Early morning", "Afternoon", "Evening", "Late night"]
+    ),
+    (
+        "What makes a server feel active?",
+        ["Funny conversations", "Daily polls", "Events", "Everyone chatting"]
+    ),
+    (
+        "Which would you choose for a whole week?",
+        ["No homework", "No exams", "No early mornings", "Longer holidays"]
+    ),
+    (
+        "What's the most useful everyday skill?",
+        ["Cooking", "Fixing tech problems", "Managing money", "Learning quickly"]
+    ),
+    (
+        "What's your preferred way to listen to music?",
+        ["Headphones", "Speakers", "Earbuds", "Whatever is available"]
+    ),
+    (
+        "Which is more fun?",
+        ["Trying something new", "Getting better at a skill", "Competing", "Relaxing"]
+    ),
+    (
+        "You get ₹5,000 to spend. What comes first?",
+        ["Save it", "Buy tech", "Get something fun", "Treat family or friends"]
+    ),
+    (
+        "What is the best kind of online content?",
+        ["Funny", "Educational", "Gaming", "Music"]
+    ),
+    (
+        "Which everyday invention is most important?",
+        ["Internet", "Smartphone", "Electricity", "Refrigerator"]
+    ),
+    (
+        "What's the best thing about weekends?",
+        ["No school", "More sleep", "More gaming", "Time with friends"]
+    ),
+    (
+        "Choose a place to hang out.",
+        ["A mall", "A park", "A friend's house", "Online with friends"]
+    ),
+    (
+        "What makes a song memorable?",
+        ["Beat", "Melody", "Lyrics", "Overall vibe"]
+    ),
+    (
+        "Which would you rather instantly master?",
+        ["A language", "A sport", "A musical instrument", "A school subject"]
+    ),
+    (
+        "What's the funniest type of server moment?",
+        ["Random messages", "Unexpected replies", "Funny usernames", "Everyone online at once"]
+    ),
 ]
 
 
@@ -61,13 +191,17 @@ class PollBot(commands.Bot):
         asyncio.create_task(send_daily_poll())
 
 
-bot = PollBot(command_prefix="!", intents=intents)
+bot = PollBot(
+    command_prefix="!",
+    intents=intents
+)
 
 
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user}")
-    print("Daily poll system is running.")
+    print(f"Daily polls will be posted in #{CHANNEL_NAME}.")
+    print("Startup test is completely disabled.")
 
 
 async def post_random_poll():
@@ -80,15 +214,21 @@ async def post_random_poll():
         )
 
         if channel is None:
-            print(f"Could not find #{CHANNEL_NAME} in {guild.name}")
+            print(
+                f"Could not find #{CHANNEL_NAME} in {guild.name}. "
+                "Check the channel name."
+            )
             continue
 
-        available = [p for p in POLLS if p != last_poll]
+        available_polls = [
+            poll for poll in POLLS
+            if poll != last_poll
+        ]
 
-        if not available:
-            available = POLLS
+        if not available_polls:
+            available_polls = POLLS
 
-        question, answers = random.choice(available)
+        question, answers = random.choice(available_polls)
         last_poll = (question, answers)
 
         try:
@@ -103,21 +243,22 @@ async def post_random_poll():
 
             await channel.send(poll=poll)
 
-            print(f"Poll posted in #{CHANNEL_NAME} in {guild.name}: {question}")
+            print(
+                f"Poll posted in #{CHANNEL_NAME} "
+                f"in {guild.name}: {question}"
+            )
 
         except Exception as e:
-            print(f"Could not create poll in {guild.name}: {type(e).__name__}: {e}")
+            print(
+                f"Could not create poll in {guild.name}: "
+                f"{type(e).__name__}: {e}"
+            )
 
 
 async def send_daily_poll():
     await bot.wait_until_ready()
 
-    if TEST_ON_STARTUP:
-        print("TEST MODE: attempting a poll in 10 seconds...")
-        await asyncio.sleep(10)
-        await post_random_poll()
-        print("Startup test finished.")
-
+    # No startup test. Only post at the scheduled daily time.
     while not bot.is_closed():
         now = datetime.now(timezone.utc)
 
@@ -132,7 +273,11 @@ async def send_daily_poll():
             target += timedelta(days=1)
 
         wait_seconds = (target - now).total_seconds()
-        print(f"Next daily poll in {wait_seconds / 3600:.2f} hours.")
+
+        print(
+            f"Next poll scheduled for {target.isoformat()} "
+            f"(UTC). Waiting {wait_seconds / 3600:.2f} hours."
+        )
 
         await asyncio.sleep(wait_seconds)
 
