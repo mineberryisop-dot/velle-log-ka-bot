@@ -55,7 +55,10 @@ class PollBot(commands.Bot):
         asyncio.create_task(send_daily_poll())
 
 
-bot = PollBot(command_prefix="!", intents=intents)
+bot = PollBot(
+    command_prefix="!",
+    intents=intents
+)
 
 
 @bot.event
@@ -72,10 +75,10 @@ async def send_daily_poll():
     while not bot.is_closed():
         now = datetime.now(timezone.utc)
 
-        # 4:08 PM IST = 10:38 UTC
+        # 2:10 PM IST = 08:40 UTC
         target = now.replace(
-            hour=10,
-            minute=38,
+            hour=8,
+            minute=40,
             second=0,
             microsecond=0
         )
@@ -84,6 +87,7 @@ async def send_daily_poll():
             target += timedelta(days=1)
 
         wait_seconds = (target - now).total_seconds()
+
         print(f"Next poll in {wait_seconds / 3600:.2f} hours.")
 
         await asyncio.sleep(wait_seconds)
@@ -98,13 +102,17 @@ async def send_daily_poll():
                 print(f"Could not find #{CHANNEL_NAME} in {guild.name}")
                 continue
 
-            available = [poll for poll in POLLS if poll != last_poll]
+            available = [
+                poll for poll in POLLS
+                if poll != last_poll
+            ]
 
             if not available:
                 available = POLLS
 
             poll = random.choice(available)
             last_poll = poll
+
             question, answers = poll
 
             try:
@@ -117,10 +125,15 @@ async def send_daily_poll():
                     duration=24,
                     multiple=False
                 )
-                print(f"Poll posted in {guild.name}: {question}")
+
+                print(
+                    f"Poll posted in {guild.name}: {question}"
+                )
 
             except Exception as e:
-                print(f"Could not create poll in {guild.name}: {e}")
+                print(
+                    f"Could not create poll in {guild.name}: {e}"
+                )
 
 
 async def main():
